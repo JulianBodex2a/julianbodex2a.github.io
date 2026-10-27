@@ -1,6 +1,21 @@
 <?php
 declare(strict_types=1);
+
+const ORIGIN = 'https://julianbodex2a.github.io';
+
+session_set_cookie_params([
+    'samesite' => 'None',
+    'secure'   => true,
+    'path'     => '/',
+]);
 session_start();
+
+header('Access-Control-Allow-Origin: ' . ORIGIN);
+header('Access-Control-Allow-Credentials: true');
+header('Access-Control-Allow-Headers: Content-Type');
+header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
+if (($_SERVER['REQUEST_METHOD'] ?? '') === 'OPTIONS') { http_response_code(204); exit; }
+
 require __DIR__ . '/config.php';
 
 function json_out($v, int $code = 200): void {
@@ -133,7 +148,6 @@ case 'stream':
                     if (isset($rh[$k])) header($k . ': ' . $rh[$k]);
                 }
                 header('Accept-Ranges: bytes');
-                header('Access-Control-Allow-Origin: *');
             }
             echo $d;
             return strlen($d);
