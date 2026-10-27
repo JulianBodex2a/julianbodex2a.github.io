@@ -116,14 +116,15 @@
 </div>
 
 <script>
-const API = 'api.php';
+const API = 'https://TU-HOST.com/api.php';
+const APIHOST = 'https://TU-HOST.com';
 let CACHE = [];
 
 async function api(action, data, method) {
   method = method || 'POST';
   const r = await fetch(API + '?action=' + action, {
     method: method,
-    credentials: 'same-origin',
+    credentials: 'include',
     headers: { 'Content-Type': 'application/json' },
     body: data ? JSON.stringify(data) : undefined
   });
@@ -149,7 +150,7 @@ function entrar() {
 async function login() {
   const r = await fetch(API + '?action=login', {
     method: 'POST',
-    credentials: 'same-origin',
+    credentials: 'include',
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
     body: 'password=' + encodeURIComponent(document.getElementById('pw').value)
   }).then(function (x) { return x.json(); });
@@ -262,7 +263,7 @@ async function borrar(id) {
 }
 
 function copyM3U8() {
-  const u = location.origin + location.pathname.replace(/[^/]*$/, '') + 'lista.m3u8';
+  const u = APIHOST + '/lista.m3u8';
   navigator.clipboard.writeText(u);
   flash('URL copiada: ' + u);
 }
