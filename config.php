@@ -2,10 +2,10 @@
 declare(strict_types=1);
 
 // ============ AJUSTES ============
-const ADMIN_PASS = '140198';
+const ADMIN_PASS = 'pon-una-clave-larga-y-rara';
 const TOKEN_TTL  = 1800;
 const PRETTY_URLS = true;
-const BASE_OVERRIDE = 'http://localhost:8000';
+const BASE_OVERRIDE = 'https://TU-HOST.com';
 const DATA_FILE  = __DIR__ . '/data.json';
 const CACHE_FILE = __DIR__ . '/tokencache.json';
 const UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:158.0) Gecko/20100101 Firefox/158.0';
