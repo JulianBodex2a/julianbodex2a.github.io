@@ -66,10 +66,11 @@
 </dialog>
 
 <script>
-const API = 'api.php';
+const API = 'https://TU-HOST.com/api.php';
+const APIHOST = 'https://TU-HOST.com';
 let datos = [], actual = null;
 
-function esc(s){return String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+function esc(s){return String(s===null||s===undefined?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
 
 (async () => {
   datos = await fetch(API + '?action=list').then(r => r.json());
@@ -85,10 +86,10 @@ function esc(s){return String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt
     const d = document.createElement('div');
     d.className = 'item';
     d.onclick = () => abrir(titulo, lista);
-    d.innerHTML = `
-      <img class="poster" src="${esc(lista[0].poster)}" loading="lazy" onerror="this.style.opacity=.3">
-      <div class="cap">${esc(titulo)}</div>
-      <div class="sub">${esSerie ? lista.length + ' capítulo' + (lista.length>1?'s':'') : 'Película'}</div>`;
+    d.innerHTML =
+      '<img class="poster" src="' + esc(lista[0].poster) + '" loading="lazy" onerror="this.style.opacity=.3">' +
+      '<div class="cap">' + esc(titulo) + '</div>' +
+      '<div class="sub">' + (esSerie ? lista.length + ' capítulo' + (lista.length>1?'s':'') : 'Película') + '</div>';
     g.appendChild(d);
   }
 })();
@@ -102,8 +103,8 @@ function abrir(titulo, lista) {
     lista.forEach(it => {
       const div = document.createElement('div');
       div.className = 'ep';
-      div.innerHTML = `<span class="sub" style="min-width:66px">S${String(it.season).padStart(2,'0')}E${String(it.episode).padStart(2,'0')}</span>
-                       <span>${esc(it.epname || 'Capítulo ' + it.episode)}</span>`;
+      div.innerHTML = '<span class="sub" style="min-width:66px">S' + String(it.season).padStart(2,'0') + 'E' + String(it.episode).padStart(2,'0') + '</span>' +
+                      '<span>' + esc(it.epname || 'Capítulo ' + it.episode) + '</span>';
       div.onclick = () => { [...e.children].forEach(c=>c.classList.remove('on')); div.classList.add('on'); play(it); };
       e.appendChild(div);
     });
@@ -123,11 +124,11 @@ function play(it) {
 
 function verEnVLC() {
   if (!actual) return;
-  location.href = 'vlc://' + location.origin + location.pathname.replace(/[^/]*$/, '') + 'api.php?action=stream&id=' + actual.id;
+  location.href = 'vlc://' + API + '?action=stream&id=' + actual.id;
 }
 
 function abrirM3U8() {
-  const u = location.origin + location.pathname.replace(/[^/]*$/, '') + 'lista.m3u8';
+  const u = APIHOST + '/lista.m3u8';
   window.open(u);
   navigator.clipboard?.writeText(u);
 }
