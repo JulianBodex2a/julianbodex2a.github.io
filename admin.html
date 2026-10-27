@@ -116,8 +116,9 @@
 </div>
 
 <script>
-const API = 'https://TU-HOST.com/api.php';
-const APIHOST = 'https://TU-HOST.com';
+const ES_LOCAL = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+const APIHOST = ES_LOCAL ? location.origin : 'https://jubodex.gamer.free';
+const API = APIHOST + '/api.php';
 let CACHE = [];
 
 async function api(action, data, method) {
@@ -148,15 +149,24 @@ function entrar() {
 }
 
 async function login() {
-  const r = await fetch(API + '?action=login', {
-    method: 'POST',
-    credentials: 'include',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: 'password=' + encodeURIComponent(document.getElementById('pw').value)
-  }).then(function (x) { return x.json(); });
-
-  if (r.ok) entrar();
-  else document.getElementById('loginerr').textContent = r.error || 'Error';
+  const err = document.getElementById('loginerr');
+  err.textContent = 'Conectando...';
+  try {
+    const res = await fetch(API + '?action=login', {
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: 'password=' + encodeURIComponent(document.getElementById('pw').value)
+    });
+    const txt = await res.text();
+    let r;
+    try { r = JSON.parse(txt); }
+    catch (e) { err.textContent = 'Respuesta no valida (' + res.status + '): ' + txt.slice(0, 120); return; }
+    if (r.ok) { err.textContent = ''; entrar(); }
+    else err.textContent = r.error || ('Error ' + res.status);
+  } catch (e) {
+    err.textContent = 'No se pudo conectar: ' + e.message;
+  }
 }
 
 async function logout() {
